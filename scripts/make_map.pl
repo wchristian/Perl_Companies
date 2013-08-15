@@ -11,14 +11,16 @@ use DBIx::Simple;
 run();
 
 sub run {
-    my %locations = map { $_->{location} => 1 } @{ Load( io( "../Perl_Companies.yaml" )->all ) };
+    my @companies = @{ Load( io( "../Perl_Companies.yaml" )->all ) };
+    my %locations = map { $_->{location} => 1 } @companies;
     print scalar( keys %locations ) . "\n";
 
-    my $db        = DBIx::Simple->new( "dbi:SQLite:dbname=geo.db" );
-    my $geocoder  = Geo::Coder::Google->new( apiver => 3 );
-    my @locations = map { get_coords( $geocoder, $db, $_ ) } keys %locations;
+    my $db       = DBIx::Simple->new( "dbi:SQLite:dbname=geo.db" );
+    my $geocoder = Geo::Coder::Google->new( apiver => 3 );
+    my %geocodes = map { $_->{name} => $_ } map { get_coords( $geocoder, $db, $_ ) } keys %locations;
+    push @{ $geocodes{ $_->{location} }{companies} }, $_->{name} for grep { $geocodes{ $_->{location} } } @companies;
 
-    my $json = encode_json( \@locations );
+    my $json = encode_json( [ values %geocodes ] );
     io( "loc.js" )->print( "var locationArray = $json;" );
 
     return;
