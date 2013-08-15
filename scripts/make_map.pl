@@ -2,7 +2,6 @@ use strictures;
 
 package make_map;
 
-use feature 'state';
 use IO::All -binary;
 use Geo::Coder::Google;
 use YAML 'Load';
