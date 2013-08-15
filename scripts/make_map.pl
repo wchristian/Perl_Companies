@@ -4,7 +4,7 @@ package make_map;
 
 use IO::All -binary;
 use Geo::Coder::Google;
-use YAML 'Load';
+use YAML::Syck 'Load';
 use JSON qw'encode_json decode_json';
 use DBIx::Simple;
 
