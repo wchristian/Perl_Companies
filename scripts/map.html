@@ -41,15 +41,23 @@
       
         var coord;
         for (coord in locationArray) {
-          var loc = locationArray[coord];
-          new google.maps.Marker({
-            position: new google.maps.LatLng(loc.lat, loc.lng),
-            map: Map,
-            title: loc.name
-          });
+          new_marker(coord, Map);
         }
       }
       
+      function new_marker(coord, Map) {
+        var loc = locationArray[coord];
+        var marker = new google.maps.Marker({
+          position: new google.maps.LatLng(loc.lat, loc.lng),
+          map: Map,
+          title: loc.name
+        });
+        var infowindow = new google.maps.InfoWindow({ content: "<b>"+loc.name+"</b><br><br><li>"+loc.companies.join("<br><li>") });
+        google.maps.event.addListener(marker, 'click', function() {
+          infowindow.open(Map,marker);
+        });
+      }
+
       google.maps.event.addDomListener(window, 'load', initialize);
     </script>
   </head>
